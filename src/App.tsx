@@ -7,12 +7,14 @@ import {Shell} from './view/shell'
 import {RoutesContainer} from './Navigation'
 import {Provider as DrawerStateProvider} from './state/shell'
 import {Provider as SessionProvider} from './state/session'
+import {TestCtrls} from './view/com/testing/TestCtrls'
 
 function InnerApp() {
   return (
     <SafeAreaProvider>
       <React.Fragment key={'HelloWorld'}>
         <RoutesContainer>
+          <TestCtrls />
           <Shell />
         </RoutesContainer>
       </React.Fragment>

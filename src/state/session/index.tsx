@@ -16,6 +16,7 @@ const ApiContext = React.createContext<ApiContext>({
 })
 export function Provider({children}: React.PropsWithChildren<{}>) {
   const [state, setState] = React.useState<Session | null>(null)
+
   useEffect(() => {
     const {
       data: {subscription},

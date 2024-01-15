@@ -1,15 +1,32 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {useIsDrawerOpen, useSetDrawerOpen} from '@/state/shell'
 import {Button, Text, View} from 'react-native'
 import {useSession, useSessionApi} from '@/state/session'
-
-export function HomeScreen() {
+import type {NativeStackScreenProps} from '@react-navigation/native-stack'
+import {BottomTabNavigatorParams} from '@/lib/routes/types'
+type Props = NativeStackScreenProps<BottomTabNavigatorParams, 'Home'>
+export function HomeScreen({route, navigation}: Props) {
+  console.log(navigation.isFocused())
   const isDrawerOpen = useIsDrawerOpen()
   const setDrawerOpen = useSetDrawerOpen()
 
   const session = useSession()
   const {createAccount, login, logout} = useSessionApi()
-  console.log('Home', {session})
+
+  useEffect(() => {
+    const getMoviesFromApi = () => {
+      return fetch('https://reactnative.dev/movies.json')
+        .then(response => response.json())
+        .then(json => {
+          console.log({json})
+          return json.movies
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    }
+    getMoviesFromApi()
+  }, [])
 
   return (
     <View style={{gap: 10}}>
