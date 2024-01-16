@@ -13,7 +13,7 @@ module.exports = {
       'module-resolver',
       {
         alias: {
-          '@': './src',
+          '#': './src',
           lib: './src/lib',
           state: './src/state',
           view: './src/view',

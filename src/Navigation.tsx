@@ -8,6 +8,7 @@ import {
 import {HomeScreen} from './view/screens/Home'
 import {AboutScreen} from './view/screens/About'
 import {createStackNavigator} from '@react-navigation/stack'
+import {Login} from './view/screens/Login'
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorParams>()
 const Root = createStackNavigator<RootStackNavigatorParams>()
@@ -18,17 +19,22 @@ function RoutesContainer({children}: React.PropsWithChildren<{}>) {
 function RootNavigator() {
   return (
     <Root.Navigator
+      initialRouteName="App"
       screenOptions={{
         headerShown: false,
       }}>
       <Root.Screen name="App" component={TabsNavigator} />
+      <Root.Screen name="Login" component={Login} />
     </Root.Navigator>
   )
 }
 
 function TabsNavigator() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="About" component={AboutScreen} />
     </Tab.Navigator>

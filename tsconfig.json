@@ -5,7 +5,7 @@
     "module": "esnext",
     "types": ["node"],
     "paths": {
-      "@/*": ["./src/*"],
+      "#/*": ["./src/*"],
       "lib/*": ["./src/lib/*"],
       "state/*": ["./src/state/*"],
       "view/*": ["./src/view/*"]

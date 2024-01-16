@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 import {Session} from '@supabase/supabase-js'
-import {supabase} from '@/lib/supabase'
+import {supabase} from '#/lib/supabase'
 
 export type StateContext = Session
 export type ApiContext = {
@@ -16,18 +16,6 @@ const ApiContext = React.createContext<ApiContext>({
 })
 export function Provider({children}: React.PropsWithChildren<{}>) {
   const [state, setState] = React.useState<Session | null>(null)
-
-  useEffect(() => {
-    const {
-      data: {subscription},
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log({session})
-      setState(session)
-    })
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [])
 
   const createAccount = React.useCallback<ApiContext['createAccount']>(
     async ({email, password}) => {
@@ -64,6 +52,17 @@ export function Provider({children}: React.PropsWithChildren<{}>) {
     }),
     [createAccount, login, logout],
   )
+
+  useEffect(() => {
+    const {
+      data: {subscription},
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setState(session)
+    })
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
   return (
     <StateContext.Provider value={state}>
       <ApiContext.Provider value={api}>{children}</ApiContext.Provider>

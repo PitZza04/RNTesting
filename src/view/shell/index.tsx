@@ -1,7 +1,7 @@
-import {RootNavigator} from '@/Navigation'
 import React from 'react'
 import {View, StyleSheet, DimensionValue} from 'react-native'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
+import {RootNavigator} from '#/Navigation'
 
 function ShellInner() {
   const safeAreaInsets = useSafeAreaInsets()
