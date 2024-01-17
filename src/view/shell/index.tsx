@@ -1,7 +1,7 @@
 import React from 'react'
-import {View, StyleSheet, DimensionValue} from 'react-native'
+import {View, StyleSheet, DimensionValue, StatusBar} from 'react-native'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
-import {RootNavigator} from '#/Navigation'
+import {RootNavigator, RoutesContainer} from '#/Navigation'
 
 function ShellInner() {
   const safeAreaInsets = useSafeAreaInsets()
@@ -20,11 +20,12 @@ function ShellInner() {
 }
 export function Shell() {
   return (
-    <>
-      <View style={[styles.outerContainer]}>
+    <View style={[styles.outerContainer]}>
+      <StatusBar barStyle={'dark-content'} />
+      <RoutesContainer>
         <ShellInner />
-      </View>
-    </>
+      </RoutesContainer>
+    </View>
   )
 }
 

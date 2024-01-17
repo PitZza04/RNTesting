@@ -1,8 +1,26 @@
 import React, {useEffect} from 'react'
 import {Session} from '@supabase/supabase-js'
 import {supabase} from '#/lib/supabase'
+import * as persisted from '../persisted'
+import {emitSessionDropped} from '../event'
 
-export type StateContext = Session
+export type AtpSessionEvent =
+  | 'create'
+  | 'create-failed'
+  | 'update'
+  | 'expired'
+  | 'network-error'
+
+export type SessionAccount = persisted.PersistedAccount
+export type SessionState = {
+  isInitialLoad: boolean
+  isSwitchingAccount: boolean
+  accounts: SessionAccount
+  currentAccount: SessionAccount | undefined
+}
+export type StateContext = SessionState & {
+  hasSession: boolean
+}
 export type ApiContext = {
   createAccount: (props: {email: string; password: string}) => Promise<void>
   login: (props: {email: string; password: string}) => Promise<void>
@@ -14,6 +32,7 @@ const ApiContext = React.createContext<ApiContext>({
   login: async () => {},
   logout: async () => {},
 })
+
 export function Provider({children}: React.PropsWithChildren<{}>) {
   const [state, setState] = React.useState<Session | null>(null)
 
@@ -41,6 +60,7 @@ export function Provider({children}: React.PropsWithChildren<{}>) {
     [],
   )
   const logout = React.useCallback<ApiContext['logout']>(async () => {
+    emitSessionDropped()
     await supabase.auth.signOut()
   }, [])
 
@@ -63,6 +83,12 @@ export function Provider({children}: React.PropsWithChildren<{}>) {
       subscription.unsubscribe()
     }
   }, [])
+
+  useEffect(() => {
+    return persisted.onUpdate(() => {
+      console.log('On Emitter', {state})
+    })
+  }, [state])
   return (
     <StateContext.Provider value={state}>
       <ApiContext.Provider value={api}>{children}</ApiContext.Provider>

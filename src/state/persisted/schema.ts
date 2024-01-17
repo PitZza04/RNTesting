@@ -62,7 +62,7 @@ export const defaults: Schema = {
   externalEmbeds: {},
   mutedThreads: [],
   invites: {
-    copiedInvites: [],
+    copiedInvites: ['Hello World'],
   },
   onboarding: {
     step: 'Home',

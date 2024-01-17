@@ -5,7 +5,7 @@ import {Animated, StyleSheet, View, Text} from 'react-native'
 import {useAnimatedValue} from 'lib/hooks/useAnimatedValue'
 import {IS_TEST} from '#/env'
 
-const TIMEOUT = 4e3
+const TIMEOUT = 4e3 // 4 seconds
 
 export function show(message: string) {
   const item = new RootSiblings(<Toast message={message} />)
@@ -52,7 +52,7 @@ function Toast({message}: {message: string}) {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 60,
+    top: 20,
     left: 0,
     right: 0,
     alignItems: 'center',

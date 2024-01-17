@@ -12,18 +12,40 @@ import {TestCtrls} from './view/com/testing/TestCtrls'
 import {init as initPersistedState} from '#/state/persisted'
 import {RootSiblingParent} from 'react-native-root-siblings'
 import * as Toast from './view/com/util/Toast'
+import * as Notification from 'lib/notifications/notification'
+import {listenSessionDropped} from './state/event'
+import messaging from '@react-native-firebase/messaging'
+import {Alert} from 'react-native'
+
+//
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log({remoteMessage})
+})
+
 function InnerApp() {
   useEffect(() => {
-    Toast.show('hello world')
+    listenSessionDropped(() => {
+      console.log('Heyyow')
+      Toast.show(`Sorry! Your session expired. Please log in again.`)
+    })
+    Notification.requestPermissionV2()
   }, [])
+
+  useEffect(() => {
+    //On ForeGround
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage))
+    })
+
+    return unsubscribe
+  }, [])
+
   return (
     <SafeAreaProvider>
       <React.Fragment key={'HelloWorld'}>
         <RootSiblingParent>
-          <RoutesContainer>
-            <TestCtrls />
-            <Shell />
-          </RoutesContainer>
+          <TestCtrls />
+          <Shell />
         </RootSiblingParent>
       </React.Fragment>
     </SafeAreaProvider>

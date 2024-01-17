@@ -6,8 +6,8 @@ import BroadcastChannel from '#/lib/broadcast'
 export type {Schema, PersistedAccount} from '#/state/persisted/schema'
 export {defaults} from '#/state/persisted/schema'
 
-const broadcast = new BroadcastChannel('BSKY_BROADCAST_CHANNEL')
-const UPDATE_EVENT = 'BSKY_UPDATE'
+const broadcast = new BroadcastChannel('AUTOMATE_CHANNEL')
+const UPDATE_EVENT = 'AUTOMATE_UPDATE'
 let _state: Schema = defaults
 const _emitter = new EventEmitter()
 export async function init() {
@@ -22,7 +22,6 @@ export async function init() {
       await store.write(defaults) // opt: init new store
     }
     _state = stored || defaults // return new store
-    console.log('persisted state: initialized', stored)
   } catch (e) {
     console.error('persisted state: failed to load root state from storage', {
       error: e,
