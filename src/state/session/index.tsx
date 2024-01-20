@@ -11,16 +11,13 @@ export type AtpSessionEvent =
   | 'expired'
   | 'network-error'
 
-export type SessionAccount = persisted.PersistedAccount
+// export type SessionAccount = persisted.PersistedAccount
 export type SessionState = {
-  isInitialLoad: boolean
-  isSwitchingAccount: boolean
-  accounts: SessionAccount
-  currentAccount: SessionAccount | undefined
+  session: Session | undefined
 }
-export type StateContext = SessionState & {
-  hasSession: boolean
-}
+
+export type StateContext = Session
+
 export type ApiContext = {
   createAccount: (props: {email: string; password: string}) => Promise<void>
   login: (props: {email: string; password: string}) => Promise<void>
@@ -54,14 +51,12 @@ export function Provider({children}: React.PropsWithChildren<{}>) {
         email,
         password,
       })
-
-      console.log({data, error})
     },
     [],
   )
   const logout = React.useCallback<ApiContext['logout']>(async () => {
-    emitSessionDropped()
     await supabase.auth.signOut()
+    emitSessionDropped()
   }, [])
 
   const api = React.useMemo(

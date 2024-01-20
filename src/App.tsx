@@ -16,7 +16,7 @@ import * as Notification from 'lib/notifications/notification'
 import {listenSessionDropped} from './state/event'
 import messaging from '@react-native-firebase/messaging'
 import {Alert} from 'react-native'
-
+import PushNotification from 'react-native-push-notification'
 //
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log({remoteMessage})
@@ -25,15 +25,21 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 function InnerApp() {
   useEffect(() => {
     listenSessionDropped(() => {
-      console.log('Heyyow')
       Toast.show(`Sorry! Your session expired. Please log in again.`)
     })
-    Notification.requestPermissionV2()
   }, [])
 
   useEffect(() => {
     //On ForeGround
     const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log(JSON.stringify(remoteMessage, null, 2))
+      PushNotification.localNotification({
+        channelId: 'channel-id-1',
+        message: remoteMessage.notification?.body || '',
+        title: remoteMessage.notification?.title || '',
+        bigPictureUrl: remoteMessage.notification?.android?.imageUrl,
+        smallIcon: remoteMessage.notification?.android?.imageUrl,
+      })
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage))
     })
 

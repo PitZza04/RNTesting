@@ -7,6 +7,7 @@ import {useInvitesAPI, useInvitesState} from '#/state/invites'
 import * as Toast from '../com/util/Toast'
 import {useNavigation} from '@react-navigation/native'
 import {NavigationProp} from '#/lib/routes/types'
+import {supabase} from '#/lib/supabase'
 export function HomeScreen() {
   const isDrawerOpen = useIsDrawerOpen()
   const setDrawerOpen = useSetDrawerOpen()
@@ -14,17 +15,24 @@ export function HomeScreen() {
   const session = useSession()
   console.log({session})
   const {createAccount, login, logout} = useSessionApi()
-  const invites = useInvitesState()
+
   const {setInviteCopied} = useInvitesAPI()
 
   const showToast = () => {
     Toast.show('Hello World')
   }
+  const callEdgeFunction = async () => {
+    const {data, error} = await supabase.functions.invoke('helloworld', {
+      body: {name: 'Functions'},
+    })
+    const response = JSON.parse(data)
+    console.log({response})
+    console.log({error})
+  }
 
   return (
     <View style={{gap: 10}}>
       <Text>{session?.user?.email}</Text>
-      <Text>{JSON.stringify(invites.copiedInvites, null, 2)}</Text>
       <Text>{isDrawerOpen ? 'Drawer is open' : 'Drawer is closed'}</Text>
       <Button
         title="Toggle Drawer"
@@ -59,6 +67,7 @@ export function HomeScreen() {
           })
         }}
       />
+      <Button title="Call Edge Function" onPress={callEdgeFunction} />
     </View>
   )
 }

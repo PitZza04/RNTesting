@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "generate:types": "npx supabase gen types typescript --project-id ajlffgzvpogwytdkntoj --schema public > src/types/supabase.ts"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.21.0",
@@ -20,15 +21,18 @@
     "@react-navigation/stack": "^6.3.20",
     "@supabase/supabase-js": "^2.39.3",
     "@tanstack/react-query": "^5.17.9",
+    "add": "^2.0.6",
     "eventemitter3": "^5.0.1",
     "react": "18.2.0",
     "react-native": "0.73.2",
     "react-native-device-info": "^10.12.0",
     "react-native-gesture-handler": "^2.14.0",
+    "react-native-push-notification": "^8.1.1",
     "react-native-root-siblings": "^5.0.1",
     "react-native-safe-area-context": "^4.8.2",
     "react-native-screens": "^3.29.0",
     "react-native-url-polyfill": "^2.0.0",
+    "yarn": "^1.22.21",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -41,6 +45,7 @@
     "@react-native/typescript-config": "0.73.1",
     "@tsconfig/react-native": "^3.0.2",
     "@types/react": "^18.2.6",
+    "@types/react-native-push-notification": "^8.1.4",
     "@types/react-test-renderer": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "babel-jest": "^29.6.3",

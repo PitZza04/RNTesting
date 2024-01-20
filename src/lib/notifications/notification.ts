@@ -9,6 +9,8 @@ import {
   getSystemName,
   getUniqueId,
 } from 'react-native-device-info'
+import {supabase} from '../supabase'
+import {Session} from '@supabase/supabase-js'
 export async function checkPermission() {
   const permission = await messaging().hasPermission()
   console.log({permission})
@@ -48,10 +50,53 @@ export async function requestPermission() {
       device_id: deviceId,
     },
   }
-
-  console.log({pushData})
 }
 
-export async function requestPermissionV2() {
-  await messaging().registerDeviceForRemoteMessages()
+//TODO: Optimize Update on User
+export async function requestPermissionAndRegisterToken(
+  session: Session | null,
+) {
+  const permissionEnabled = await messaging().hasPermission()
+  const apiLevel = await getApiLevel()
+
+  const token = await messaging().getToken()
+  const isAndroidAPILevelGreater32 = apiLevel > 32 && Platform.OS === 'android'
+  if (!permissionEnabled || permissionEnabled === -1) {
+    if (isAndroidAPILevelGreater32) {
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      )
+    }
+    await messaging().requestPermission()
+  }
+
+  if (!session) return
+
+  try {
+    console.debug('Saving fcm token', token)
+    await supabase
+      .from('users')
+      .update({fcm_token: token})
+      .eq('id', session.user.id)
+  } catch (error) {
+    console.error('Failed to saved fcm token')
+  }
+}
+
+export function registerTokenChangeHandler(session: Session) {
+  const unsubscribe = messaging().onTokenRefresh(async fcmToken => {
+    console.debug('Notification: Push Token changed', {fcmToken})
+
+    try {
+      await supabase
+        .from('users')
+        .upsert({id: session?.user?.id, fcm_token: fcmToken})
+    } catch (error) {
+      console.error('Notifications: Failed to set push token', {error})
+    }
+  })
+
+  return () => {
+    unsubscribe()
+  }
 }

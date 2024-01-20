@@ -11,7 +11,6 @@ const UPDATE_EVENT = 'AUTOMATE_UPDATE'
 let _state: Schema = defaults
 const _emitter = new EventEmitter()
 export async function init() {
-  console.log(`before call broadcast`, broadcast.onmessage)
   broadcast.onmessage = onBroadcastMessage
 
   try {
