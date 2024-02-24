@@ -9,7 +9,7 @@ module.exports = {
     'react-hooks/rules-of-hooks': 'error', // For checking rules of hooks
     'react-hooks/exhaustive-deps': 'warn', // For checking hook dependencies
   },
-  ignorePatterns: ['ios', 'android', ''],
+  ignorePatterns: ['ios', 'android'],
   settings: {
     componentWrapperFunctions: ['observer'],
   },

@@ -3,17 +3,29 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {HomeScreen} from './screens/Home';
-import {BottomTabNavigatorParams, StackNavigatorParams} from './routes/types';
+import {
+  BottomTabNavigatorParams,
+  StackNavigatorParams,
+  State,
+} from './lib/routes/types';
 import {AboutScreen} from './screens/About';
+import {createNativeStackNavigatorWithAuth} from './view/shell/createNativeStackNavigatorWithAuth';
+import {AwitScreen} from './screens/AwitScreen';
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorParams>();
-const Stack = createNativeStackNavigator<StackNavigatorParams>();
-const HomeTab = createNativeStackNavigator<StackNavigatorParams>();
-
+const Stack = createNativeStackNavigatorWithAuth<StackNavigatorParams>();
+const HomeTab = createNativeStackNavigatorWithAuth<StackNavigatorParams>();
+const AboutTab = createNativeStackNavigatorWithAuth<StackNavigatorParams>();
 function commonScreens(Stack: typeof HomeTab) {
   return (
     <>
-      <Stack.Screen name="Awit" getComponent={() => HomeScreen} />
+      <Stack.Screen
+        name="Awit"
+        getComponent={() => AwitScreen}
+        options={{
+          requireAuth: true,
+        }}
+      />
     </>
   );
 }
@@ -23,6 +35,14 @@ function HomeTabNavigator() {
       <HomeTab.Screen name="Home" getComponent={() => HomeScreen} />
       {commonScreens(HomeTab)}
     </HomeTab.Navigator>
+  );
+}
+function AboutTabNavigator() {
+  return (
+    <AboutTab.Navigator>
+      <AboutTab.Screen name="About" getComponent={() => AboutScreen} />
+      {commonScreens(AboutTab)}
+    </AboutTab.Navigator>
   );
 }
 
@@ -36,10 +56,26 @@ function TabNavigator() {
         lazy: true,
       }}>
       <Tab.Screen name={'HomeTab'} getComponent={() => HomeTabNavigator} />
-      <Tab.Screen name={'AboutTab'} component={AboutScreen} />
+      <Tab.Screen name={'AboutTab'} getComponent={() => AboutTabNavigator} />
     </Tab.Navigator>
   );
 }
+// const LINKING = {
+//   getStateFromPath(path: string) {
+//     if(path == 'About'){
+//       return {
+//         routes: [
+//           {
+//             name: 'AboutTab',
+//             state: {
+//               routes: [...state, {name: route, params}],
+//             },
+//           },
+//         ],
+//       };
+//     }
+//   },
+// };
 
 function RoutesContainer({children}: React.PropsWithChildren<{}>) {
   return <NavigationContainer>{children}</NavigationContainer>;

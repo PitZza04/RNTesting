@@ -1,3 +1,4 @@
+import {NavigationState, PartialState} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 export type BottomTabNavigatorParams = {
@@ -8,9 +9,16 @@ export type BottomTabNavigatorParams = {
 export type StackNavigatorParams = {
   Awit: undefined;
   Home: undefined;
+  About: undefined;
 };
 export type AllNavigatorParams = StackNavigatorParams & {
   HomeTab: undefined;
   AboutTab: undefined;
 };
 export type NavigationProp = NativeStackNavigationProp<AllNavigatorParams>;
+
+export type State =
+  | NavigationState
+  | Omit<PartialState<NavigationState>, 'stale'>;
+
+export type RouteParams = Record<string, string>;
