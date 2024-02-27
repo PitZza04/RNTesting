@@ -19,6 +19,7 @@ import {
 
 import type {NativeStackNavigatorProps} from '@react-navigation/native-stack/lib/typescript/src/types';
 import {Text, View} from 'react-native';
+import {usePalette} from '#/lib/hooks/usePalette';
 
 type NativeStackNavigationOptionsWithAuth = NativeStackNavigationOptions & {
   requireAuth?: boolean;
@@ -72,8 +73,43 @@ function NativeStackNavigator({
       }),
     [navigation, state.index, state.key],
   );
-
+  const pal = usePalette('default');
+  const activeRoute = state.routes[state.index];
+  const activeDescriptor = descriptors[activeRoute.key];
+  const activeRouteRequiresAuth = activeDescriptor.options.requireAuth ?? false;
   const newDescriptors: typeof descriptors = {};
+
+  if (activeRouteRequiresAuth && true) {
+    return (
+      <View
+        style={[
+          {
+            flex: 1,
+
+            height: '100%',
+          },
+          pal.view,
+        ]}>
+        <Text>You need to login</Text>
+      </View>
+    );
+  }
+  // if (true) {
+  //   return (
+  //     <View
+  //       style={{
+  //         backgroundColor: 'red',
+  //         flex: 1,
+  //         position: 'absolute',
+  //         top: 0,
+  //         right: 0,
+  //         left: 0,
+  //         bottom: 0,
+  //       }}>
+  //       <Text>You need to login</Text>
+  //     </View>
+  //   );
+  // }
   for (let key in descriptors) {
     const descriptor = descriptors[key];
     const requireAuth = descriptor.options.requireAuth ?? false;
@@ -81,11 +117,8 @@ function NativeStackNavigator({
       ...descriptor,
       render() {
         if (requireAuth) {
-          return (
-            <View>
-              <Text>Hello Worl</Text>
-            </View>
-          );
+          console.log('required Auth');
+          return <View />;
         } else {
           return descriptor.render();
         }

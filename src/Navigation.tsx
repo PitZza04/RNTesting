@@ -1,7 +1,10 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {
+  BottomTabBarProps,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
 import {HomeScreen} from './screens/Home';
 import {
   BottomTabNavigatorParams,
@@ -11,6 +14,7 @@ import {
 import {AboutScreen} from './screens/About';
 import {createNativeStackNavigatorWithAuth} from './view/shell/createNativeStackNavigatorWithAuth';
 import {AwitScreen} from './screens/AwitScreen';
+import {BottomBar} from './view/shell/bottom-bar/BottomBar';
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorParams>();
 const Stack = createNativeStackNavigatorWithAuth<StackNavigatorParams>();
@@ -32,7 +36,11 @@ function commonScreens(Stack: typeof HomeTab) {
 function HomeTabNavigator() {
   return (
     <HomeTab.Navigator>
-      <HomeTab.Screen name="Home" getComponent={() => HomeScreen} />
+      <HomeTab.Screen
+        name="Home"
+        getComponent={() => HomeScreen}
+        options={{requireAuth: true}}
+      />
       {commonScreens(HomeTab)}
     </HomeTab.Navigator>
   );
@@ -46,7 +54,13 @@ function AboutTabNavigator() {
   );
 }
 
-function TabNavigator() {
+function TabsNavigator() {
+  const tabBar = useCallback(
+    (props: JSX.IntrinsicAttributes & BottomTabBarProps) => {
+      return <BottomBar {...props} />;
+    },
+    [],
+  );
   return (
     <Tab.Navigator
       initialRouteName="HomeTab"
@@ -54,7 +68,8 @@ function TabNavigator() {
       screenOptions={{
         headerShown: false,
         lazy: true,
-      }}>
+      }}
+      tabBar={tabBar}>
       <Tab.Screen name={'HomeTab'} getComponent={() => HomeTabNavigator} />
       <Tab.Screen name={'AboutTab'} getComponent={() => AboutTabNavigator} />
     </Tab.Navigator>
@@ -81,4 +96,4 @@ function RoutesContainer({children}: React.PropsWithChildren<{}>) {
   return <NavigationContainer>{children}</NavigationContainer>;
 }
 
-export {TabNavigator, RoutesContainer};
+export {TabsNavigator, RoutesContainer};

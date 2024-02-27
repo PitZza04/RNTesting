@@ -1,9 +1,11 @@
 import React from 'react';
 
 import {StyleSheet} from 'react-native';
+import {Provider as ModalStateProvider} from 'state/modals';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {Shell} from './view/shell';
+import {ThemeProvider} from './lib/ThemeContext';
 
 // function InnerApp() {
 //   return <View></View>;
@@ -11,9 +13,13 @@ import {Shell} from './view/shell';
 function App(): React.JSX.Element {
   return (
     <SafeAreaProvider>
-      <GestureHandlerRootView>
-        <Shell />
-      </GestureHandlerRootView>
+      <ModalStateProvider>
+        <ThemeProvider theme="light">
+          <GestureHandlerRootView>
+            <Shell />
+          </GestureHandlerRootView>
+        </ThemeProvider>
+      </ModalStateProvider>
     </SafeAreaProvider>
   );
 }
