@@ -4,6 +4,10 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 export type BottomTabNavigatorParams = {
   HomeTab: undefined;
   AboutTab: undefined;
+  SearchTab: undefined;
+  NotificationsTab: undefined;
+  MyProfileTab: undefined;
+  FeedsTab: undefined;
 };
 
 export type StackNavigatorParams = {
@@ -14,7 +18,9 @@ export type StackNavigatorParams = {
 export type AllNavigatorParams = StackNavigatorParams & {
   HomeTab: undefined;
   AboutTab: undefined;
+  SearchTab: undefined;
 };
+
 export type NavigationProp = NativeStackNavigationProp<AllNavigatorParams>;
 
 export type State =

@@ -24,6 +24,8 @@ import {
   HashtagIcon,
   BellIcon,
   BellIconSolid,
+  User,
+  UserSolid,
 } from '#/lib/icons';
 type TabOptions = 'Home' | 'Search' | 'Notifications' | 'MyProfile' | 'Feeds';
 export function BottomBar({navigation}: BottomTabBarProps) {
@@ -175,24 +177,19 @@ export function BottomBar({navigation}: BottomTabBarProps) {
         <Btn
           testID="bottomBarProfileBtn"
           icon={
-            <View style={styles.ctrlIconSizingWrapper}>
-              {isAtMyProfile ? (
-                <View
-                  style={[
-                    styles.ctrlIcon,
-                    pal.text,
-                    styles.profileIcon,
-                    styles.onProfile,
-                    {borderColor: pal.text.color},
-                  ]}>
-                  <Text>H</Text>
-                </View>
-              ) : (
-                <View style={[styles.ctrlIcon, pal.text, styles.profileIcon]}>
-                  <Text>N</Text>
-                </View>
-              )}
-            </View>
+            isAtMyProfile ? (
+              <UserSolid
+                size={24}
+                strokeWidth={1.9}
+                style={[styles.ctrlIcon, pal.text, styles.profileIcon]}
+              />
+            ) : (
+              <User
+                size={24}
+                strokeWidth={1.9}
+                style={[styles.ctrlIcon, pal.text, styles.profileIcon]}
+              />
+            )
           }
           onPress={onPressProfile}
           onLongPress={onLongPressProfile}

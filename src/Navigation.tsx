@@ -15,6 +15,8 @@ import {AboutScreen} from './screens/About';
 import {createNativeStackNavigatorWithAuth} from './view/shell/createNativeStackNavigatorWithAuth';
 import {AwitScreen} from './screens/AwitScreen';
 import {BottomBar} from './view/shell/bottom-bar/BottomBar';
+import {useModalControls} from './state/modals';
+import {useGeolocation} from './state/shell/geolocation';
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorParams>();
 const Stack = createNativeStackNavigatorWithAuth<StackNavigatorParams>();
@@ -36,11 +38,7 @@ function commonScreens(Stack: typeof HomeTab) {
 function HomeTabNavigator() {
   return (
     <HomeTab.Navigator>
-      <HomeTab.Screen
-        name="Home"
-        getComponent={() => HomeScreen}
-        options={{requireAuth: true}}
-      />
+      <HomeTab.Screen name="Home" getComponent={() => HomeScreen} />
       {commonScreens(HomeTab)}
     </HomeTab.Navigator>
   );
@@ -71,7 +69,16 @@ function TabsNavigator() {
       }}
       tabBar={tabBar}>
       <Tab.Screen name={'HomeTab'} getComponent={() => HomeTabNavigator} />
-      <Tab.Screen name={'AboutTab'} getComponent={() => AboutTabNavigator} />
+      <Tab.Screen name={'SearchTab'} getComponent={() => AboutTabNavigator} />
+      <Tab.Screen name={'FeedsTab'} getComponent={() => AboutTabNavigator} />
+      <Tab.Screen
+        name={'NotificationsTab'}
+        getComponent={() => AboutTabNavigator}
+      />
+      <Tab.Screen
+        name={'MyProfileTab'}
+        getComponent={() => AboutTabNavigator}
+      />
     </Tab.Navigator>
   );
 }
@@ -93,7 +100,18 @@ function TabsNavigator() {
 // };
 
 function RoutesContainer({children}: React.PropsWithChildren<{}>) {
-  return <NavigationContainer>{children}</NavigationContainer>;
+  const latLng = useGeolocation();
+  const {openModal} = useModalControls();
+  function onReady() {
+    if (!latLng) {
+      openModal({
+        name: 'confirm',
+      });
+    }
+  }
+  return (
+    <NavigationContainer onReady={onReady}>{children}</NavigationContainer>
+  );
 }
 
 export {TabsNavigator, RoutesContainer};

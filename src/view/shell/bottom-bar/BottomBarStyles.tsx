@@ -64,7 +64,7 @@ export const styles = StyleSheet.create({
     top: -2.5,
   },
   profileIcon: {
-    top: -4,
+    top: -2,
   },
   onProfile: {
     borderWidth: 1,

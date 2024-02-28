@@ -23,6 +23,7 @@ import {usePalette} from '#/lib/hooks/usePalette';
 
 type NativeStackNavigationOptionsWithAuth = NativeStackNavigationOptions & {
   requireAuth?: boolean;
+  requireCoordinates?: boolean;
 };
 
 function NativeStackNavigator({
@@ -77,6 +78,8 @@ function NativeStackNavigator({
   const activeRoute = state.routes[state.index];
   const activeDescriptor = descriptors[activeRoute.key];
   const activeRouteRequiresAuth = activeDescriptor.options.requireAuth ?? false;
+  const activeRouteRequiresCoordinates =
+    activeDescriptor.options.requireCoordinates ?? false;
   const newDescriptors: typeof descriptors = {};
 
   if (activeRouteRequiresAuth && true) {
@@ -90,10 +93,11 @@ function NativeStackNavigator({
           },
           pal.view,
         ]}>
-        <Text>You need to login</Text>
+        <Text>You need to have coordinates</Text>
       </View>
     );
   }
+
   // if (true) {
   //   return (
   //     <View
