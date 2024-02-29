@@ -14,11 +14,15 @@ export type StackNavigatorParams = {
   Awit: undefined;
   Home: undefined;
   About: undefined;
+  Google: undefined;
+  Search: undefined;
+  Feeds: undefined;
 };
 export type AllNavigatorParams = StackNavigatorParams & {
   HomeTab: undefined;
   AboutTab: undefined;
   SearchTab: undefined;
+  FeedsTab: undefined;
 };
 
 export type NavigationProp = NativeStackNavigationProp<AllNavigatorParams>;

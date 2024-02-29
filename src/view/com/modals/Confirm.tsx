@@ -5,7 +5,8 @@ export const snapPoints = ['60%'];
 export function Component({name}: ConfirmModal) {
   return (
     <View>
-      <Text>{name}</Text>
+      <Text style={{color: '#000'}}>{name}</Text>
+      <Text style={{color: '#000'}}>Hello WOrld</Text>
     </View>
   );
 }

@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
   BottomTabBarProps,
@@ -8,6 +8,7 @@ import {
 import {HomeScreen} from './screens/Home';
 import {
   BottomTabNavigatorParams,
+  NavigationProp,
   StackNavigatorParams,
   State,
 } from './lib/routes/types';
@@ -16,12 +17,14 @@ import {createNativeStackNavigatorWithAuth} from './view/shell/createNativeStack
 import {AwitScreen} from './screens/AwitScreen';
 import {BottomBar} from './view/shell/bottom-bar/BottomBar';
 import {useModalControls} from './state/modals';
-import {useGeolocation} from './state/shell/geolocation';
+import {useGeolocation, useGeolocationApi} from './state/shell/geolocation';
+import {FeedScreen} from './screens/Feed';
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorParams>();
 const Stack = createNativeStackNavigatorWithAuth<StackNavigatorParams>();
 const HomeTab = createNativeStackNavigatorWithAuth<StackNavigatorParams>();
 const AboutTab = createNativeStackNavigatorWithAuth<StackNavigatorParams>();
+const FeedTab = createNativeStackNavigatorWithAuth<StackNavigatorParams>();
 function commonScreens(Stack: typeof HomeTab) {
   return (
     <>
@@ -46,9 +49,17 @@ function HomeTabNavigator() {
 function AboutTabNavigator() {
   return (
     <AboutTab.Navigator>
-      <AboutTab.Screen name="About" getComponent={() => AboutScreen} />
+      <AboutTab.Screen name="Search" getComponent={() => AboutScreen} />
       {commonScreens(AboutTab)}
     </AboutTab.Navigator>
+  );
+}
+function FeedTabNavigator() {
+  return (
+    <FeedTab.Navigator>
+      <FeedTab.Screen name="Feeds" getComponent={() => FeedScreen} />
+      {commonScreens(FeedTab)}
+    </FeedTab.Navigator>
   );
 }
 
@@ -70,7 +81,7 @@ function TabsNavigator() {
       tabBar={tabBar}>
       <Tab.Screen name={'HomeTab'} getComponent={() => HomeTabNavigator} />
       <Tab.Screen name={'SearchTab'} getComponent={() => AboutTabNavigator} />
-      <Tab.Screen name={'FeedsTab'} getComponent={() => AboutTabNavigator} />
+      <Tab.Screen name={'FeedsTab'} getComponent={() => FeedTabNavigator} />
       <Tab.Screen
         name={'NotificationsTab'}
         getComponent={() => AboutTabNavigator}
@@ -82,32 +93,13 @@ function TabsNavigator() {
     </Tab.Navigator>
   );
 }
-// const LINKING = {
-//   getStateFromPath(path: string) {
-//     if(path == 'About'){
-//       return {
-//         routes: [
-//           {
-//             name: 'AboutTab',
-//             state: {
-//               routes: [...state, {name: route, params}],
-//             },
-//           },
-//         ],
-//       };
-//     }
-//   },
-// };
 
 function RoutesContainer({children}: React.PropsWithChildren<{}>) {
   const latLng = useGeolocation();
-  const {openModal} = useModalControls();
-  function onReady() {
-    if (!latLng) {
-      openModal({
-        name: 'confirm',
-      });
-    }
+  const {getCurrentLocation} = useGeolocationApi();
+
+  async function onReady() {
+    await getCurrentLocation();
   }
   return (
     <NavigationContainer onReady={onReady}>{children}</NavigationContainer>

@@ -1,6 +1,10 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {NavigationProp} from '#/lib/routes/types';
-import {useNavigation} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from '@react-navigation/native';
 import * as persisted from '#/state/persisted';
 import {View, StyleSheet, Text, Button, BackHandler} from 'react-native';
 import {useModalControls} from '#/state/modals';
@@ -11,9 +15,24 @@ export function HomeScreen() {
   const {openModal} = useModalControls();
   const location = useGeolocation();
   const items = persisted.get('invites');
+  const isScreenFocused = useIsFocused();
   console.log('Items,', items);
   console.log('location,', location);
+  useFocusEffect(
+    useCallback(() => {
+      if (!location) {
+        setTimeout(() => {
+          navigation.navigate('SearchTab');
+        }, 1000);
+      }
+    }, [location]),
+  );
 
+  useEffect(() => {
+    if (isScreenFocused && !location) {
+      setTimeout(() => navigation.navigate('SearchTab'), 1000);
+    }
+  }, [isScreenFocused]);
   return (
     <View style={{flex: 1}}>
       <Text style={{color: 'red'}}>HomeScreen</Text>

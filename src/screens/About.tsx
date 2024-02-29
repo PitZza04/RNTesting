@@ -3,12 +3,12 @@ import {NavigationProp} from '#/lib/routes/types';
 import {useNavigation} from '@react-navigation/native';
 import * as persisted from '#/state/persisted';
 import {View, Text, Button} from 'react-native';
-import {useGeolocation, useSetGeolocation} from '#/state/shell/geolocation';
+import {useGeolocation, useGeolocationApi} from '#/state/shell/geolocation';
 
 export function AboutScreen() {
   const navigation = useNavigation<NavigationProp>();
   const latLng = useGeolocation();
-  const {setLatLng, clearLatLng} = useSetGeolocation();
+  const {setLatLng, clearLatLng} = useGeolocationApi();
 
   return (
     <View style={{flex: 1}}>
