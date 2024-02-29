@@ -1,72 +1,22 @@
-import {z} from 'zod'
-
-const externalEmbedOptions = ['show', 'hide'] as const
-
-// only data needed for rendering account page
-const accountSchema = z.object({
-  service: z.string(),
-  did: z.string(),
-  handle: z.string(),
-  email: z.string().optional(),
-  emailConfirmed: z.boolean().optional(),
-  refreshJwt: z.string().optional(), // optional because it can expire
-  accessJwt: z.string().optional(), // optional because it can expire
-})
-export type PersistedAccount = z.infer<typeof accountSchema>
+import {z} from 'zod';
 
 export const schema = z.object({
-  colorMode: z.enum(['system', 'light', 'dark']),
-  session: z.object({
-    accounts: z.array(accountSchema),
-    currentAccount: accountSchema.optional(),
-  }),
-  reminders: z.object({
-    lastEmailConfirm: z.string().optional(),
-  }),
-  requireAltTextEnabled: z.boolean(), // should move to server
-  externalEmbeds: z
+  latLng: z
     .object({
-      giphy: z.enum(externalEmbedOptions).optional(),
-      tenor: z.enum(externalEmbedOptions).optional(),
-      youtube: z.enum(externalEmbedOptions).optional(),
-      youtubeShorts: z.enum(externalEmbedOptions).optional(),
-      twitch: z.enum(externalEmbedOptions).optional(),
-      vimeo: z.enum(externalEmbedOptions).optional(),
-      spotify: z.enum(externalEmbedOptions).optional(),
-      appleMusic: z.enum(externalEmbedOptions).optional(),
-      soundcloud: z.enum(externalEmbedOptions).optional(),
+      latitude: z.number(),
+      longitude: z.number(),
     })
     .optional(),
-  mutedThreads: z.array(z.string()), // should move to server
+
   invites: z.object({
     copiedInvites: z.array(z.string()),
   }),
-  onboarding: z.object({
-    step: z.string(),
-  }),
-  hiddenPosts: z.array(z.string()).optional(), // should move to server
-  useInAppBrowser: z.boolean().optional(),
-})
-export type Schema = z.infer<typeof schema>
+});
+export type Schema = z.infer<typeof schema>;
 
 export const defaults: Schema = {
-  colorMode: 'system',
-  session: {
-    accounts: [],
-    currentAccount: undefined,
-  },
-  reminders: {
-    lastEmailConfirm: undefined,
-  },
-  requireAltTextEnabled: false,
-  externalEmbeds: {},
-  mutedThreads: [],
+  latLng: undefined,
   invites: {
     copiedInvites: ['Hello World'],
   },
-  onboarding: {
-    step: 'Home',
-  },
-  hiddenPosts: [],
-  useInAppBrowser: undefined,
-}
+};

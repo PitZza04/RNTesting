@@ -4,11 +4,12 @@
     "jsx": "react-jsx",
     "module": "esnext",
     "types": ["node"],
+    "resolveJsonModule": true,
     "paths": {
       "#/*": ["./src/*"],
       "lib/*": ["./src/lib/*"],
       "state/*": ["./src/state/*"],
-      "view/*": ["./src/view/*"]
+      "platform/*": ["./src/platform/*"]
     }
   }
 }

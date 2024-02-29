@@ -1,108 +1,117 @@
-import * as React from 'react'
-import {LinkingOptions, NavigationContainer} from '@react-navigation/native'
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
+import React, {useCallback} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {
+  BottomTabBarProps,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
+import {HomeScreen} from './screens/Home';
 import {
   BottomTabNavigatorParams,
-  RootStackNavigatorParams,
-} from './lib/routes/types'
-import {HomeScreen} from './view/screens/Home'
-import {AboutScreen} from './view/screens/About'
-import {createStackNavigator} from '@react-navigation/stack'
-import {Login} from './view/screens/Login'
-import {Linking} from 'react-native'
-import messaging from '@react-native-firebase/messaging'
+  StackNavigatorParams,
+  State,
+} from './lib/routes/types';
+import {AboutScreen} from './screens/About';
+import {createNativeStackNavigatorWithAuth} from './view/shell/createNativeStackNavigatorWithAuth';
+import {AwitScreen} from './screens/AwitScreen';
+import {BottomBar} from './view/shell/bottom-bar/BottomBar';
+import {useModalControls} from './state/modals';
+import {useGeolocation} from './state/shell/geolocation';
 
-const Tab = createBottomTabNavigator<BottomTabNavigatorParams>()
-const Root = createStackNavigator<RootStackNavigatorParams>()
-
-const LINKING: LinkingOptions<ReactNavigation.RootParamList> = {
-  prefixes: ['demolatest://'],
-  config: {
-    screens: {
-      App: {
-        screens: {
-          Home: 'Home',
-          About: 'About',
-        },
-      },
-    },
-  },
-  async getInitialURL() {
-    const url = await Linking.getInitialURL()
-
-    if (url != null) {
-      return url
-    }
-
-    const message = await messaging().getInitialNotification()
-    if (message) {
-      const notificationData = message.data
-      console.log({notificationData})
-      if (notificationData) {
-        return notificationData
-      }
-    }
-
-    return undefined
-  },
-  subscribe(listener: (url: string) => void) {
-    const onReceiveURL = ({url}: {url: string}) => listener(url)
-
-    // Listen to incoming links from deep linking
-    const subscription = Linking.addEventListener('url', onReceiveURL)
-
-    // Handle notification caused app to open from background state
-    const unsubscribeNotification = messaging().onNotificationOpenedApp(
-      remoteMessage => {
-        if (remoteMessage) {
-          const notification = remoteMessage.data
-
-          console.log('from subscribe', notification)
-        }
-      },
-    )
-
-    return () => {
-      subscription.remove()
-      unsubscribeNotification()
-    }
-  },
-}
-function RoutesContainer({children}: React.PropsWithChildren<{}>) {
-  React.useEffect(() => {
-    const listener = Linking.addEventListener('url', ({url}) => {
-      console.log('Deep Link URL:', url)
-    })
-    return () => {
-      listener.remove()
-    }
-  }, [])
-  return <NavigationContainer linking={LINKING}>{children}</NavigationContainer>
-}
-
-function RootNavigator() {
+const Tab = createBottomTabNavigator<BottomTabNavigatorParams>();
+const Stack = createNativeStackNavigatorWithAuth<StackNavigatorParams>();
+const HomeTab = createNativeStackNavigatorWithAuth<StackNavigatorParams>();
+const AboutTab = createNativeStackNavigatorWithAuth<StackNavigatorParams>();
+function commonScreens(Stack: typeof HomeTab) {
   return (
-    <Root.Navigator
-      initialRouteName="App"
-      screenOptions={{
-        headerShown: false,
-      }}>
-      <Root.Screen name="App" component={TabsNavigator} />
-      <Root.Screen name="Login" component={Login} />
-    </Root.Navigator>
-  )
+    <>
+      <Stack.Screen
+        name="Awit"
+        getComponent={() => AwitScreen}
+        options={{
+          requireAuth: true,
+        }}
+      />
+    </>
+  );
+}
+function HomeTabNavigator() {
+  return (
+    <HomeTab.Navigator>
+      <HomeTab.Screen name="Home" getComponent={() => HomeScreen} />
+      {commonScreens(HomeTab)}
+    </HomeTab.Navigator>
+  );
+}
+function AboutTabNavigator() {
+  return (
+    <AboutTab.Navigator>
+      <AboutTab.Screen name="About" getComponent={() => AboutScreen} />
+      {commonScreens(AboutTab)}
+    </AboutTab.Navigator>
+  );
 }
 
 function TabsNavigator() {
+  const tabBar = useCallback(
+    (props: JSX.IntrinsicAttributes & BottomTabBarProps) => {
+      return <BottomBar {...props} />;
+    },
+    [],
+  );
   return (
     <Tab.Navigator
+      initialRouteName="HomeTab"
+      backBehavior="initialRoute"
       screenOptions={{
         headerShown: false,
-      }}>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="About" component={AboutScreen} />
+        lazy: true,
+      }}
+      tabBar={tabBar}>
+      <Tab.Screen name={'HomeTab'} getComponent={() => HomeTabNavigator} />
+      <Tab.Screen name={'SearchTab'} getComponent={() => AboutTabNavigator} />
+      <Tab.Screen name={'FeedsTab'} getComponent={() => AboutTabNavigator} />
+      <Tab.Screen
+        name={'NotificationsTab'}
+        getComponent={() => AboutTabNavigator}
+      />
+      <Tab.Screen
+        name={'MyProfileTab'}
+        getComponent={() => AboutTabNavigator}
+      />
     </Tab.Navigator>
-  )
+  );
+}
+// const LINKING = {
+//   getStateFromPath(path: string) {
+//     if(path == 'About'){
+//       return {
+//         routes: [
+//           {
+//             name: 'AboutTab',
+//             state: {
+//               routes: [...state, {name: route, params}],
+//             },
+//           },
+//         ],
+//       };
+//     }
+//   },
+// };
+
+function RoutesContainer({children}: React.PropsWithChildren<{}>) {
+  const latLng = useGeolocation();
+  const {openModal} = useModalControls();
+  function onReady() {
+    if (!latLng) {
+      openModal({
+        name: 'confirm',
+      });
+    }
+  }
+  return (
+    <NavigationContainer onReady={onReady}>{children}</NavigationContainer>
+  );
 }
 
-export {RoutesContainer, TabsNavigator, RootNavigator}
+export {TabsNavigator, RoutesContainer};

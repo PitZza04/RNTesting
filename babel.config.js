@@ -4,7 +4,6 @@ module.exports = {
     [
       'module:react-native-dotenv',
       {
-        envName: 'APP_ENV',
         moduleName: '@env',
         path: '.env',
       },
@@ -15,10 +14,12 @@ module.exports = {
         alias: {
           '#': './src',
           lib: './src/lib',
+          platform: './src/platform',
+          screens: './src/screens',
           state: './src/state',
-          view: './src/view',
         },
       },
     ],
+    'react-native-reanimated/plugin',
   ],
-}
+};

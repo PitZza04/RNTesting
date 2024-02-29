@@ -1,14 +1,16 @@
 module.exports = {
   root: true,
-  extends: ['@react-native', 'prettier', 'plugin:react/recommended'],
+  extends: ['@react-native/community', 'plugin:react/recommended', 'prettier'],
   parser: '@typescript-eslint/parser',
-  plugins: ['react', 'react-hooks', '@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'react'],
   rules: {
     'react/no-unescaped-entities': 0,
     'react-native/no-inline-styles': 0,
+    'react-hooks/rules-of-hooks': 'error', // For checking rules of hooks
+    'react-hooks/exhaustive-deps': 'warn', // For checking hook dependencies
   },
-  ignorePatterns: ['android', 'ios'],
+  ignorePatterns: ['ios', 'android'],
   settings: {
     componentWrapperFunctions: ['observer'],
   },
-}
+};
